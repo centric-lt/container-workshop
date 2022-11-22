@@ -124,6 +124,6 @@ Binding multiple applications in compose file is done by defining container name
 
 More complex application examples from the Docker example/demo [application repository](https://github.com/dockersamples).
 
-Folder `k8s-wordsmith-demo` contains [K8s Wordsmith Demo](k8s-wordsmith-demo/README.md) application, which selects 5 random words from random word sources, running in separate containers and presents a constructed sentence.
+Folder `k8s-wordsmith-demo` contains [K8s Wordsmith Demo](https://github.com/centric-lt/container-workshop/blob/master/k8s-wordsmith-demo/README.md) application, which selects 5 random words from random word sources, running in separate containers and presents a constructed sentence.
 
-A simple [NGinx proxy for Flask application with MySQL backend](nginx-flask-mysql/README.md) can be found in `nginx-flask-mysql` folder.
+A simple [NGinx proxy for Flask application with MySQL backend](https://github.com/centric-lt/container-workshop/blob/master/nginx-flask-mysql/README.md) can be found in `nginx-flask-mysql` folder.
