@@ -94,7 +94,7 @@ docker-compose up
 docker-compose up -d
 ```
 
-While volumes can be defined explicilty using docker CLI, it is more convienient to define them in Docker Compose file.
+While volumes can be defined explicilty using docker CLI, it is more convienient to define them in Docker Compose file. This is done in a `docker-compose-volumes.yaml` file, which has volume definitions added like the following
 ```yaml
 # Specify volume or local path and define mount point in container
 volumes:
@@ -106,7 +106,7 @@ volumes:
    logvolume: {}
 ```
 
-As the file name for volume usage example is not default, it needs to be explicitly specified. Also it is recommended to specify distinct project name as by default Docker assigns project name according to parent folder. In some cases running multiple Compose applications in the same project scope leads to unexpected and undesired results, like "orphaned containers found".
+As the file name for volume usage example is not default, it needs to be explicitly specified. Also it is recommended to specify distinct project name (`-p volume-example`) as by default Docker assigns project name according to parent folder. In some cases running multiple Compose applications in the same project scope leads to unexpected and undesired results, like "orphaned containers found".
 
 ```bash
 docker-compose -f docker-compose-volume.yaml -p volume-example up -d
@@ -119,3 +119,11 @@ Binding multiple applications in compose file is done by defining container name
         container_name: apache-__app_server_username__
         hostname: apache-__app_server_username__
 ```
+
+## More examples from Docker
+
+More complex application examples from the Docker example/demo [application repository](https://github.com/dockersamples).
+
+Folder `k8s-wordsmith-demo` contains [K8s Wordsmith Demo](k8s-wordsmith-demo/README.md) application, which selects 5 random words from random word sources, running in separate containers and presents a constructed sentence.
+
+A simple [NGinx proxy for Flask application with MySQL backend](nginx-flask-mysql/README.md) can be found in `nginx-flask-mysql` folder.
