@@ -75,7 +75,7 @@ docker image list
 
 Container build is based on initial base image, specified in FROM definition. If image name is specified implicitly, then search is done in default public repository, usually `docker.io`. If an explicit name is used, then image is pulled from specified repository.
 
-When searching for an image on https://hub.docker.com/, https://quay.io/search or other public repository, it is important to take into account image publisher. For example search for "python" results in mothe than "80000" hist. There have been cases of malicious content in Docker images in public repositories so a trusted publisher should be used.
+When searching for an image on https://hub.docker.com/, https://quay.io/search or other public repository, it is important to take into account image publisher. For example search for "python" results in more than "80000" hits. There have been cases of malicious content in Docker images in public repositories so a trusted publisher should be used.
 
 It is advisable to minimize number of RUN commands in the Dockerfiles intended for production use. This allows to reduce image size due to reducing need to do multiple changes for the same FS block and smaller layer diff.
 
@@ -92,6 +92,9 @@ TLDR version. Requires correct Compose file, though. :) Run the following comman
 docker-compose up
 # To disconnect from terminal and have available console
 docker-compose up -d
+# When finished with application stop it and dismantle networks
+# Otherwise next example will fail as it will not be able to bind to 8080 port
+docker-compose down
 ```
 
 While volumes can be defined explicilty using docker CLI, it is more convienient to define them in Docker Compose file. This is done in a `docker-compose-volumes.yaml` file, which has volume definitions added like the following
