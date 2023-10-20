@@ -87,6 +87,8 @@ CMD instruction defines container workload application and its parameters by def
 
 TLDR version. Requires correct Compose file, though. :) Run the following command in the folder, where `docker-compose.yaml` does reside. Compose will parse file, fetch/build images and start applications. Access the application using  http://127.0.0.1:8080/qod and get your Quote Of the Day.
 
+**NOTE:** Due to public access to Quote of the day service was closed more than year ago, there no actual quotes, unfortunately. Free service allows to get only 5 quotes per day using personal auth token and implementing this was considered a bit out of scope for Compose demo.
+
 ```bash
 # To run in the foreground and see logs in terminal
 docker-compose up
@@ -122,6 +124,39 @@ Binding multiple applications in compose file is done by defining container name
         container_name: apache-__app_server_username__
         hostname: apache-__app_server_username__
 ```
+## Runing Docker in Docker
+
+In certain cases there might be a need to isolate Docker container, within container, i.e. Docker in Docker (DinD). Such inception allows completely isolate container environment from host. It is doable, however this imposes a set of issues:
+* Networking for applications becomes more complex and error prone.
+* Container build environment becomes more complicated as build context need to be provided to containerized Docker "host".
+    * This can be mitigated by locally building containers and pushing them to repo, but that mostly defeats  purpose of DinD.
+* To avoid serious performance penalties volumes should be defined and mounted in multiple levels to avoid writing to Copy On Write layered FS, used in containers.
+
+Such example is defined in `docker-compose-dind.yaml` file.
+
+```bash
+docker-compose -f docker-compose-dind.yaml -p dind-example up -d
+```
+
+If checked, you should see only two docker containers running in the system. However if container list on `docker` "host" is verified, then actual payload will be seen.
+
+```bash
+:~/git/container-workshop$ docker ps
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS          PORTS                                                      NAMES
+986ac52e9f9d   docker:dind   "dockerd-entrypoint.…"   16 minutes ago   Up 16 minutes   2375-2376/tcp                                              container-workshop-service-1
+4f1632c0a562   docker:dind   "dockerd-entrypoint.…"   16 minutes ago   Up 16 minutes   2375-2376/tcp, 0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   container-workshop-docker-1
+:~/git/container-workshop$ docker-compose -f docker-compose-dind.yaml -p dind-example ps
+NAME                           COMMAND                  SERVICE             STATUS              PORTS
+container-workshop-docker-1    "dockerd-entrypoint.…"   docker              running             2375-2376/tcp, 0.0.0.0:8080->8080/tcp, :::8080->8080/tcp
+container-workshop-service-1   "dockerd-entrypoint.…"   service             running             2375-2376/tcp
+:~/git/container-workshop$ docker-compose -f docker-compose-dind.yaml -p dind-example exec -it docker docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                    NAMES
+e9275f041586   app            "python3 app.py"         16 minutes ago   Up 16 minutes   0.0.0.0:8080->8080/tcp   app-app-1
+b7ef72934d7c   redis:alpine   "docker-entrypoint.s…"   16 minutes ago   Up 16 minutes   6379/tcp                 app-redis-1
+
+```
+
+To summarize, usually it might be more efficient to design volume structure properly and isolate container files within volumes. This might be more efficient than DinD implementation, which will still require multilevel volume mounts. Usually such isolation is used on application build hosts to ensure clean build environment and avoid situation, when leftovers from previous build might affect new build and/or test statges.
 
 ## More examples from Docker
 

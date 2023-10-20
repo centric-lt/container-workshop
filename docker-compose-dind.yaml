@@ -5,13 +5,18 @@ version: '3'
 # Define services
 services:
 
+  # Docker dind "host" must be named docker otherwise TLS certs will fail validation
   docker:
     image: docker:dind
     privileged: true
-    environment:
-      DOCKER_TLS_CERTDIR: ''
+    # Uncomment tris for insecure Docker TCP communication on 2375
+    #environment:
+      # DOCKER_TLS_CERTDIR: ''
     volumes:
-      - ./daemon.json:/etc/docker/daemon.json
+      # Uncomment tris for insecure Docker TCP communication on 2375
+      # - ./daemon.json:/etc/docker/daemon.json
+      # Use certs volume to put dind self generated TLS certs for secure communication
+      - certs:/certs/client
     expose:
       - 2375
       - 2376
@@ -24,12 +29,14 @@ services:
     volumes:
       - .:/app
       - logvolume:/var/log
+      - certs:/certs/client
     working_dir: /app
     environment:
-      DOCKER_HOST: 'tcp://docker:2375'
+      # Uncomment to use insecure communication
+      # DOCKER_HOST: 'tcp://docker:2375'
+      DOCKER_HOST: 'tcp://docker:2376'
     command: /usr/local/bin/docker-compose -f /app/docker-compose.yaml up
     #command: sh -c "sleep 10000"
-
     restart: unless-stopped
     depends_on:
       - docker
@@ -40,3 +47,4 @@ networks:
   backend:
 volumes:
    logvolume: {}
+   certs: {}
