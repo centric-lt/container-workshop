@@ -1,0 +1,6 @@
+FROM dind
+
+
+RUN mkdir /etc/docker
+COPY daemon.json /etc/docker
+

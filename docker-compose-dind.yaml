@@ -1,0 +1,42 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+
+version: '3'
+
+# Define services
+services:
+
+  docker:
+    image: docker:dind
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ''
+    volumes:
+      - ./daemon.json:/etc/docker/daemon.json
+    expose:
+      - 2375
+      - 2376
+      - 8080
+    ports:
+      - 8080:8080
+
+  service:
+    image: docker:dind
+    volumes:
+      - .:/app
+      - logvolume:/var/log
+    working_dir: /app
+    environment:
+      DOCKER_HOST: 'tcp://docker:2375'
+    command: /usr/local/bin/docker-compose -f /app/docker-compose.yaml up
+    #command: sh -c "sleep 10000"
+
+    restart: unless-stopped
+    depends_on:
+      - docker
+
+
+
+networks:
+  backend:
+volumes:
+   logvolume: {}
