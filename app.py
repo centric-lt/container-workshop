@@ -12,7 +12,7 @@ load_dotenv()  # take environment variables from .env.
 app = Flask(__name__)
 
 def get_quote_from_api():
-	API_URL = "http://quotes.rest/qod.json"
+	API_URL = "http://quotes.rest/qod"
 	resp = requests.get(API_URL)
 	if resp.status_code == 200:
 		try:
@@ -22,7 +22,7 @@ def get_quote_from_api():
 			print (e)
 			return None
 	else:
-		return None
+		return "No quote for today... :("
 
 
 @app.route("/")
